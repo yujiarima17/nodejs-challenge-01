@@ -1,37 +1,37 @@
 export const routes = [
     {
         method:'GET',
-        path : '',
+        path : ' /tasks',
         handler :(request,response)=>{
 
         }
     },
     {
         method:'POST',
-        path : '',
+        path : '/tasks',
         handler :(request,response)=>{
-            
+            return response.writeHead(204).end()
         }
     },
     {
         method:'DELETE',
-        path : '',
+        path : '/tasks/:id',
         handler :(request,response)=>{
-            
+            return response.writeHead(204).end()
         }
     },
     {
         method:'PATCH',
-        path : '',
+        path : '/tasks/:id/complete',
         handler :(request,response)=>{
-            
+            return response.writeHead(204).end()
         }
     },
     {
         method:'PUT',
-        path : '',
+        path : '/tasks/:id',
         handler :(request,response)=>{
-            
+            return response.writeHead(204).end()
         }
     }
 ]
