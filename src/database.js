@@ -11,7 +11,7 @@ export class Database {
            this.#persist()
         })
     }
-    #existsInstance = function (table){
+    #existsInstance = function (table,id){
        const exists = this.#database[table].findIndex(row=>row.id === id)
        if(exists > -1){
         return true;
@@ -44,18 +44,16 @@ export class Database {
         this.#persist()
         return data;
     }
-    delete(table,data){
-        const existsInstance= this.#existsInstance(table)
-
-        if(existsInstance){
+    delete(table,id){
+        const rowIndex = this.#database[table].findIndex(row=>row.id === id)
+        if(rowIndex > -1){
             this.#database[table].splice(rowIndex,1)
-            this.#persist
+            this.#persist()
         }
     } 
     update(table,id,data){
-        const existsInstance= this.#existsInstance(table)
-  
-        if(existsInstance){
+        const rowIndex= this.#database[table].findIndex(row=>row.id === id)
+        if(rowIndex > -1){
            const {title,description} = {data}
            if(title && description){
             this.#database[table][rowIndex] = {id,...data}
@@ -72,9 +70,9 @@ export class Database {
   
      }
      updateCompleteState(table,id,date){ 
-        const existsInstance= this.#existsInstance(table)
+        const rowIndex= this.#database[table].findIndex(row=>row.id === id)
         const {completed_at} = this.#database[table][rowIndex]
-        if(existsInstance){
+        if(rowIndex> -1){
           if(completed_at){
             this.#database[table][rowIndex]['completed_at']= date
           }
