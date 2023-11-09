@@ -57,8 +57,7 @@ export const routes = [
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
             const {id}= request.params
-            const {title,description} = request.body
-            const data = {title,description}
+            const data = request.body
             database.update('tasks',id,data)
             return response.writeHead(204).end()
         }

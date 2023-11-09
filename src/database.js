@@ -11,16 +11,8 @@ export class Database {
            this.#persist()
         })
     }
-    #existsInstance = function (table,id){
-       const exists = this.#database[table].findIndex(row=>row.id === id)
-       if(exists > -1){
-        return true;
-       }
-       else{
-        return false;
-       }
-    }
     #persist(){
+        console.log(JSON.stringify(this.#database))
         fs.writeFile(databasePath,JSON.stringify(this.#database))
     }
     select(table,search){
@@ -61,17 +53,18 @@ export class Database {
             this.#database[table][rowIndex] = {...databaseInstance,title,description,updated_at:updateDate}
             this.#persist()
            }
-           if(title){
+           else if(title){
             this.#database[table][rowIndex] = {...databaseInstance,title,updated_at : updateDate}
             this.#persist()
            }
-           if(description){
+           else if(description){
             this.#database[table][rowIndex] = {...databaseInstance,description,updated_at : updateDate}
             this.#persist()
            }
-           
+           else{
+            this.#persist()
+           }
         }
-  
      }
      updateCompleteState(table,id,date){ 
         const rowIndex= this.#database[table].findIndex(row=>row.id === id)
