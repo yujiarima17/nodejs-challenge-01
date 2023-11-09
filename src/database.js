@@ -54,18 +54,22 @@ export class Database {
     update(table,id,data){
         const rowIndex= this.#database[table].findIndex(row=>row.id === id)
         if(rowIndex > -1){
-           const {title,description} = {data}
+           const {title,description} = data
+           const updateDate = Date.now()
+           const databaseInstance = this.#database[table][rowIndex];
            if(title && description){
-            this.#database[table][rowIndex] = {id,...data}
+            this.#database[table][rowIndex] = {...databaseInstance,title,description,updated_at:updateDate}
+            this.#persist()
            }
            if(title){
-            this.#database[table][rowIndex] = {id,title}
+            this.#database[table][rowIndex] = {...databaseInstance,title,updated_at : updateDate}
+            this.#persist()
            }
            if(description){
-            this.#database[table][rowIndex = {id,description}]
+            this.#database[table][rowIndex] = {...databaseInstance,description,updated_at : updateDate}
+            this.#persist()
            }
            
-           this.#persist()
         }
   
      }
