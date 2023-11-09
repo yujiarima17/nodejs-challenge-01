@@ -25,8 +25,7 @@ export class Database {
     }
     select(table,search){
        let data = this.#database[table] ?? []
-       if(search){
-        console.log('entrei')
+       if(Object.keys(search).length!=0){
         data = data.filter((row)=>{
             return Object.entries(search).some(([key,value])=>{
                 return row[key].toLowerCase().includes(value.toLowerCase())

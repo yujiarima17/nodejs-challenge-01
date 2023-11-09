@@ -10,6 +10,8 @@ export const routes = [
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
            const search = request.query
+            
+           console.log(search?? console.log('oii'))
            const tasks = database.select('tasks', search?? {
             title: search.title,
             description:search.description,
