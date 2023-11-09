@@ -9,7 +9,14 @@ export const routes = [
         method:'GET',
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
-
+           const search = request.query
+           console.log(search)
+           console.log(search.title)
+           const tasks = database.select('tasks', search ?{
+            title: search.title,
+            description:search.description,
+           }:null);
+           return response.end(JSON.stringify(tasks));
         }
     },
     {
@@ -19,10 +26,10 @@ export const routes = [
             const {title,description} = request.body;
             const task = new Task(
                 randomUUID(),
-                null,
-                 Date.now(),
-                description,
                 title,
+                description,
+                 null,
+                Date.now(),
                  null
                 )
                 database.insert('tasks',task);
