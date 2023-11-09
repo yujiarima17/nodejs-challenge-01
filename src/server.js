@@ -12,7 +12,7 @@ const server = http.createServer(async(request,response)=>{
     const routeParams = request.url.match(route.path)
     const {query,...params} = routeParams.groups
     request.params = params
-    request.query = query ? extractQueryParams(query) :{}
+    request.query = query? extractQueryParams(query) : {}
     return route.handler(request,response)
   }
   return response.writeHead(404).end()

@@ -10,12 +10,10 @@ export const routes = [
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
            const search = request.query
-           console.log(search)
-           console.log(search.title)
-           const tasks = database.select('tasks', search ?{
+           const tasks = database.select('tasks', search?? {
             title: search.title,
             description:search.description,
-           }:null);
+           });
            return response.end(JSON.stringify(tasks));
         }
     },
@@ -56,6 +54,10 @@ export const routes = [
         method:'PUT',
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
+            const {id}= request.params
+            const {title,description} = request.body
+            const data = {title,description}
+            database.update('tasks',id,data)
             return response.writeHead(204).end()
         }
     }
