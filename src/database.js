@@ -12,12 +12,12 @@ export class Database {
         })
     }
     #persist(){
-        console.log(JSON.stringify(this.#database))
         fs.writeFile(databasePath,JSON.stringify(this.#database))
     }
     select(table,search){
        let data = this.#database[table] ?? []
-       if(Object.keys(search).length!=0){
+       const notEmptySearch = Object.keys(search).length!=0
+       if(notEmptySearch){
         data = data.filter((row)=>{
             return Object.entries(search).some(([key,value])=>{
                 return row[key].toLowerCase().includes(value.toLowerCase())
@@ -66,15 +66,20 @@ export class Database {
            }
         }
      }
-     updateCompleteState(table,id,date){ 
+     updateCompleteState(table,id){ 
         const rowIndex= this.#database[table].findIndex(row=>row.id === id)
-        const {completed_at} = this.#database[table][rowIndex]
         if(rowIndex> -1){
-          if(completed_at){
-            this.#database[table][rowIndex]['completed_at']= date
-          }
-          else{
-            this.#database[table][rowIndex]['completed_at'] = null
-          }
+            const completedDate = Date.now()
+            let completeState =  this.#database[table][rowIndex].completed_at 
+            const isNotCompleted = completeState == null
+            if(isNotCompleted){
+                this.#database[table][rowIndex].completed_at = completedDate
+                this.#persist()
+            }
+            else{
+                this.#database[table][rowIndex].completed_at  = null
+                this.#persist()
+            }
+            
      }}
 }

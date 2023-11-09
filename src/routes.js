@@ -10,8 +10,6 @@ export const routes = [
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
            const search = request.query
-            
-           console.log(search?? console.log('oii'))
            const tasks = database.select('tasks', search?? {
             title: search.title,
             description:search.description,
@@ -49,6 +47,8 @@ export const routes = [
         method:'PATCH',
         path : buildRoutePath('/tasks/:id/complete'),
         handler :(request,response)=>{
+            const {id} = request.params
+            database.updateCompleteState('tasks',id)
             return response.writeHead(204).end()
         }
     },
