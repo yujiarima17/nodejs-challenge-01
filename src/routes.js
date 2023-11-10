@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto'
 import {Database} from './database.js'
 import { buildRoutePath } from './utils/build-route-path.js';
 const database = new Database()
+const idErrorMessage = 'There is no record with this ID in the database.'
 export const routes = [
     
     {
@@ -39,8 +40,14 @@ export const routes = [
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
             const {id}= request.params
-            database.delete('tasks',id)
-            return response.writeHead(204).end()
+            const existId= database[table].findIndex(row=>row.id === id)
+            if(existId> -1){
+                database.delete('tasks',id)
+                return response.writeHead(204).end()
+            }
+            else{
+                return response.writeHead(400,idErrorMessage ).end()
+           }
         }
     },
     {
@@ -48,18 +55,29 @@ export const routes = [
         path : buildRoutePath('/tasks/:id/complete'),
         handler :(request,response)=>{
             const {id} = request.params
-            database.updateCompleteState('tasks',id)
-            return response.writeHead(204).end()
-        }
-    },
+            const existId= database[table].findIndex(row=>row.id === id)
+            if(existId > -1){
+                database.updateCompleteState('tasks',id)
+                return response.writeHead(204).end()
+            }
+            else{
+                return response.writeHead(400,idErrorMessage ).end()
+           }
+            }
+        },
     {
         method:'PUT',
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
-            const {id}= request.params
-            const data = request.body
-            database.update('tasks',id,data)
-            return response.writeHead(204).end()
+            const {id} = request.params
+            const existId= database[table].findIndex(row=>row.id === id)
+            if(existId > -1){
+                database.update('tasks',id,data)
+                return response.writeHead(204).end()
+            }
+            else{
+                return response.writeHead(400,idErrorMessage ).end()
+           }
         }
     }
 ]
