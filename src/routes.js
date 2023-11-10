@@ -3,7 +3,21 @@ import {randomUUID} from 'node:crypto'
 import {Database} from './database.js'
 import { buildRoutePath } from './utils/build-route-path.js';
 const database = new Database()
-const idErrorMessage = 'There is no record with this ID in the database.'
+function verifyBodyProps(requestBody){
+  
+    if(requestBody ==null){
+      return {isInvalid:true,errorMessage : 'Its necessary to provide title or/and description'}
+    }
+    else{
+      const {title,description,...invalidProps} = requestBody
+      if(invalidProps){
+          return {isInvalid: true,errorMessage : 'Its only necessary to provide a title or/and description'}
+      }
+      else{
+          return {isInvalid : false,errorMessage:''}
+      }
+    }
+  }
 export const routes = [
     
     {
@@ -22,17 +36,27 @@ export const routes = [
         method:'POST',
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
-            const {title,description} = request.body;
-            const task = new Task(
-                randomUUID(),
-                title,
-                description,
-                 null,
-                Date.now(),
-                 null
-                )
-                database.insert('tasks',task);
-            return response.writeHead(204).end()
+            const data= request.body;
+            console.log(data)
+            const verifyProps = verifyBodyProps(data);
+
+            if(verifyProps.isInvalid){
+                return response.writeHead(400,verifyProps.errorMessage).end()
+            }
+            else{
+                const task = new Task(
+                    randomUUID(),
+                    title,
+                    description,
+                     null,
+                    Date.now(),
+                     null
+                    )
+                    database.insert('tasks',task);
+                return response.writeHead(204).end()
+            }
+            
+            
         }
     },
     {
@@ -40,14 +64,8 @@ export const routes = [
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
             const {id}= request.params
-            const existId= database[table].findIndex(row=>row.id === id)
-            if(existId> -1){
-                database.delete('tasks',id)
-                return response.writeHead(204).end()
-            }
-            else{
-                return response.writeHead(400,idErrorMessage ).end()
-           }
+            database.delete('tasks',id)
+            return response.writeHead(204).end()
         }
     },
     {
@@ -55,29 +73,18 @@ export const routes = [
         path : buildRoutePath('/tasks/:id/complete'),
         handler :(request,response)=>{
             const {id} = request.params
-            const existId= database[table].findIndex(row=>row.id === id)
-            if(existId > -1){
-                database.updateCompleteState('tasks',id)
-                return response.writeHead(204).end()
-            }
-            else{
-                return response.writeHead(400,idErrorMessage ).end()
-           }
-            }
-        },
+            database.updateCompleteState('tasks',id)
+            return response.writeHead(204).end()
+        }
+    },
     {
         method:'PUT',
         path : buildRoutePath('/tasks/:id'),
         handler :(request,response)=>{
-            const {id} = request.params
-            const existId= database[table].findIndex(row=>row.id === id)
-            if(existId > -1){
-                database.update('tasks',id,data)
-                return response.writeHead(204).end()
-            }
-            else{
-                return response.writeHead(400,idErrorMessage ).end()
-           }
+            const {id}= request.params
+            const data = request.body
+            database.update('tasks',id,data)
+            return response.writeHead(204).end()
         }
     }
 ]
