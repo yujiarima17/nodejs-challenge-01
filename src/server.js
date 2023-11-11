@@ -2,11 +2,9 @@ import http from 'node:http'
 import {routes} from './routes.js'
 import {json} from './middlewares/json.js'
 import { extractQueryParams } from './utils/extract-query-params.js'
-import { processFile } from './middlewares/csv.js'
 const server = http.createServer(async(request,response)=>{
   const {method,url} = request
   await json(request,response)
-  // await processFile()
   const route = routes.find(route=>{
     return route.method === method && route.path.test(url)
   })

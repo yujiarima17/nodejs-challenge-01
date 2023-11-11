@@ -1,7 +1,10 @@
+
 import {Task} from './task.js'
 import {randomUUID} from 'node:crypto'
 import {Database} from './database.js'
 import { buildRoutePath } from './utils/build-route-path.js';
+
+
 const database = new Database()
 function verifyBodyProps(requestBody){
   
@@ -37,10 +40,9 @@ export const routes = [
         path : buildRoutePath('/tasks'),
         handler :(request,response)=>{
             const data= request.body;
-            console.log(data)
             const verifyProps = verifyBodyProps(data);
-
             if(verifyProps.isInvalid){
+                
                 return response.writeHead(400,verifyProps.errorMessage).end()
             }
             else{
